@@ -1,0 +1,89 @@
+// Add a new snippet called delivery-time.liquid
+
+<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+
+<div style="width:300px; clear:both;">
+  <p>
+    <label for="date">Pick a delivery date:</label>
+    <input type="text" id="datepicker" placeholder="Delivery date" name="properties[Delivery Date]" required readonly>
+    <input type="hidden" id="delivery-date" placeholder="Delivery date" name="attributes[Delivery Date]" required readonly>
+    <span style="display:block" class="instructions"> We do not deliver during the week-end.</span>
+  </p>
+</div>
+{{order.note}}
+<p class="line-item-property__field">
+  <label>Delivery Time</label>
+  <select required class="required" id="timepicker" name="properties[Delivery Time]">
+    {% assign delivery_times = section.settings.delivery_time | split: ", " %}
+    {% for time in delivery_times %}
+    <option value="{{ time }}">{{ time }}</option>
+	{% endfor %}
+  </select>
+  <input type="hidden" id="delivery-time" placeholder="Delivery time" name="attributes[Delivery Time]" required readonly>
+</p>
+
+
+
+<script>
+  var picker = new Pikaday ({
+    
+    disableDayFn: function(date){
+
+      // Disable specific dates
+      var DD = ('0' + date.getDate()).slice(-2);
+      var MM = ('0' + (date.getMonth() + 1)).slice(-2);
+      var YYYY = date.getFullYear();
+      var DDMMYYYY = DD + '/' + MM + '/' + YYYY;
+      {% assign disabled_dates = section.settings.datepicker_disable_date | split: ", " %}
+      {% for date in disabled_dates %}
+      if (DDMMYYYY == '{{ date }}') { return date; }
+      {% endfor %}
+      
+      {%- if section.settings.datepicker_weekend -%}
+      // Disable Saturday and Sunday
+      return (date.getDay() === 0 || date.getDay() === 6);
+      {%- endif -%}
+    },
+    
+    field: document.getElementById('datepicker'),
+    format: 'D/M/YYYY',
+    toString(date, format) {
+        // you should do formatting based on the passed format,
+        // but we will just return 'D/M/YYYY' for simplicity
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    },
+    parse(dateString, format) {
+        // dateString is the result of `toString` method
+        const parts = dateString.split('/');
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    },
+    maxDate: new Date(new Date().getTime() + {{ section.settings.datepicker_max_date }} * 24 * 60 * 60 * 1000),
+    minDate: new Date(new Date().getTime() + {{ section.settings.datepicker_min_date }} * 24 * 60 * 60 * 1000)
+});
+    
+    
+  setInterval(function() {
+    document.getElementById("delivery-date").value = document.getElementById("datepicker").value}, 100);
+  setInterval(function() {
+    document.getElementById("delivery-time").value = document.getElementById("timepicker").value}, 100);
+  
+</script>
+
+<style>
+  .pretty-select .text .label {
+    display: none;
+  }
+  .pika-button:hover,.pika-row.pick-whole-week:hover .pika-button {
+    color: #fff !important;
+    background: #2f4e44 !important;
+    box-shadow: none;
+    border-radius: 3px;
+}
+</style>
