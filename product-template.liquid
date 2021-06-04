@@ -1,0 +1,45 @@
+// Insert to product-template.liquid
+
+{% schema %}
+  {
+    "name": "Product pages",
+    "class": "section-product-template",
+    "settings": [
+	  {
+        "type": "header",
+        "content": "Delivery Time"
+      },
+	  {
+        "type": "text",
+        "id": "delivery_time",
+        "label": "Delivery Time and Date",
+        "default": "Before 2 pm, After 2 pm",
+        "info": "Enter dropdown values separated by commas."
+      },
+	  {
+        "type": "checkbox",
+        "id": "datepicker_weekend",
+        "default": true,
+        "label": "Disable weekend"
+      },
+	  {
+        "type": "text",
+        "id": "datepicker_disable_date",
+        "label": "Disable Specific Dates",
+        "info": "Insert dates to be disabled separated by commas. Format: date/month/year. Eg. 14/06/2021, 16/06/2021"
+      },
+	  {
+        "type": "text",
+        "id": "datepicker_min_date",
+        "label": "Cut-off days",
+        "info": "Number of days available for delivery from today."
+      },
+	  {
+        "type": "text",
+        "id": "datepicker_max_date",
+        "label": "End of Range (days)",
+        "info": "Number of days to the end of clickable date range. Leave empty for infinite."
+      }
+    ]
+  }
+{% endschema %}
