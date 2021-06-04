@@ -1,0 +1,3 @@
+// Add the following code to product-form underneath add to cart button
+
+{% unless current_variant.available %}{% else %}{% render 'delivery-time' %}{% endunless %}
